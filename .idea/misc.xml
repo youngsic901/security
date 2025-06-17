@@ -3,7 +3,9 @@
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/spr_weblogin" />
+    <file type="web" url="file://$PROJECT_DIR$/sprjwt_weblogin" />
     <file type="web" url="file://$PROJECT_DIR$/test" />
+    <file type="web" url="file://$PROJECT_DIR$/webspr_security" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">

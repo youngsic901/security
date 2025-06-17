@@ -9,6 +9,7 @@ import java.util.Base64;
 @WebServlet(loadOnStartup = 1)
 public class InitServlet extends HttpServlet {
     public void init() throws ServletException {
+        System.out.println("init");
         try {
             // 비밀 키 생성
             KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");

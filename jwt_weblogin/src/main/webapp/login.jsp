@@ -25,6 +25,7 @@
 
         // 서블릿 컨텍스트에서 Base64로 인코딩된 비밀 키 가져오기 java.util.Base64
         String encodedKey = (String) application.getAttribute("secretKey");
+        System.out.println(encodedKey);
         byte[] decodedKey = Base64.getDecoder().decode(encodedKey);
         Key secretKey = Keys.hmacShaKeyFor(decodedKey);
 
