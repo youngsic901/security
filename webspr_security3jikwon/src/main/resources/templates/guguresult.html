@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+<h3>[[${num}]]단 결과</h3>
+<ul>
+	<li th:each="i:${#numbers.sequence(1, 9)}">[[${num}]] * [[${i}]] = [[${num * i}]]</li>
+</ul>
+<a th:href="@{/auth/gugu}">다시 입력</a>
+<a th:href="@{/auth/success}">로그인 성공 페이지</a>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+<h2>로그인 페이지</h2>
+<form action="/auth/login" method="post">
+	직원번호 : <input type="text" name="sabun" /><br/>
+	직원이름 : <input type="text" name="irum" /><br/>
+	<input type="submit" value="로그인" >
+	<!-- csrf 공격 보호 목적 : 서버는 parameterName 값이 올바른지 확인하여 요청 자료의 유효성을 자동 검사한다. -->
+	<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+</form>
+<br/><br/>
+<div th:if="${param.error}">
+	<span style="color: red;">잘못된 정보가 입력되었습니다.</span>
+</div>
+</body>
+</html>
