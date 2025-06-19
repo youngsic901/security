@@ -8,6 +8,7 @@
     <file type="web" url="file://$PROJECT_DIR$/webspr_security" />
     <file type="web" url="file://$PROJECT_DIR$/webspr_security2" />
     <file type="web" url="file://$PROJECT_DIR$/webspr_security3jikwon" />
+    <file type="web" url="file://$PROJECT_DIR$/webspr_security4jwt" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">

@@ -10,6 +10,11 @@
 <hr/>
 <a href="/auth/gugu">구구단</a>
 <hr/>
-<a href="/auth/logout">로그아웃</a>
+<!--<a href="/auth/logout">로그아웃</a>-->
+<!-- .csrf()를 따로 꺼주지 않으면(현재 주석처리) 스프링 시큐리티는 로그아웃도 CSRF 보호 대상 ->  POST 요청에만 응답하고, GET 요청은 거부하거나 필터를 타지 않음 -->
+<form th:action="@{/auth/logout}" method="post">
+	<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+	<button type="submit">logout</button>
+</form>
 </body>
 </html>

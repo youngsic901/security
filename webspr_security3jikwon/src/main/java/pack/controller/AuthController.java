@@ -51,4 +51,39 @@ public class AuthController {
         model.addAttribute("username", username);
         return "success";
     }
+
+    @GetMapping("/gugu")
+    public String gugu() {
+        // 현재 인증된 사용자의 인증 정보를 읽음
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/auth/login";
+        }
+        return "gugu";
+    }
+
+    @PostMapping("/gugu")
+    public String gugu(@RequestParam(name = "num")int num, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/auth/login";
+        }
+        model.addAttribute("num", num);
+        return "guguresult";
+    }
+
+    @GetMapping("/logout")
+    public String logout() {
+        return "redirect:/auth/login";
+    }
 }
+
+// 처리 흐름
+// 1) 사용자 요청 : /login ==> sabun, irum을 서버로 전달
+// 2) 스프링 시큐리티는 UsernamePasswordAutenticationToken 생성
+//              => Authentication.authentication() 를 호출
+//              => 내부적으로 UserDetailService의 loadUserByUsername() 호출
+//              => 사용자 정보 검증 및 인증을 수행
+// 결과 처리
+// 성공 : 인증 객체 저장 -> 성공 페이지로 이동
+// 실패 : 예외 처리 -> 로그인 페이지로 이동
