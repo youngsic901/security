@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+<p>
+	<strong sec:authentication="name"></strong>님 로그인 성공
+	<br>
+	<a th:href="@{/static}">확인(메인으로 이동)</a>
+</p>
+</body>
+</html>

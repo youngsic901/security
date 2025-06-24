@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+--- 사용자 정보 안내 ---<br>
+<table border="1">
+	<tr>
+		<th>아이디</th><th>비밀번호</th><th>롤</th>
+	</tr>
+	<tr>
+		<td>guest</td><td>1234</td><td>ROLE_USER</td>
+	</tr>
+	<tr>
+		<td>batman</td><td>1234</td><td>ROLE_STAFF</td>
+	</tr>
+	<tr>
+		<td>superman</td><td>1234</td><td>ROLE_ADMIN</td>
+	</tr>
+</table>
+<h3>로그인이 필요합니다.</h3>
+<form th:action="@{/templates/user/login}" method="post">
+	<input type="text" name="username" placeholder="사용자명">
+	<input type="password" name="password">
+	<button type="submit">로그인</button>
+</form>
+</body>
+</html>
