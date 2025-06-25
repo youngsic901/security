@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+	<script type="text/javascript">
+
+		let stompClient = null;
+
+		function connect() {
+			let socket = new SockJS('/ws'); // /ws : 암호화 되지 않은 웹소켓 연결('/ws' endpoint) 암호화된 연결 => wss
+			stompClient = Stomp.over(socket); // STOMP을 사용할 수 있도록 설정(메세지 송수신 가능 클라이언트를 생성)
+
+			stompClient.connect({}, function (frame) {
+				console.log('Connected : ' + frame);
+				// "/topic/messages"로 수신된 메세지를 처리
+
+				stompClient.subscribe('/topic/messages', function(message){
+					showMessage(message.body);
+				});
+			});
+		}
+
+		function sendMessage() {
+			// 클라이언트가 입력한 메세지를 "/app/message"로 전송
+			let msgContent = document.querySelector('#message').value;
+			stompClient.send("/app/message", {}, msgContent);  // send(메세지목적지, 헤드, 메세지내용(payload))
+		}
+
+		function showMessage(message) {
+			let msgElement = document.createElement("li");
+			msgElement.textContent = message;
+			document.querySelector("#msgArea").appendChild(msgElement);
+		}
+
+		window.onload = function () {
+			connect();
+		}
+	</script>
+</head>
+<body>
+<div>
+	<input type="text" id="message" placeholder="메세지 입력..." onkeydown="if(event.keyCode===13) sendMessage()">
+	<button onclick="sendMessage()">전송</button>
+</div>
+<ul id="msgArea"></ul>
+</body>
+</html>

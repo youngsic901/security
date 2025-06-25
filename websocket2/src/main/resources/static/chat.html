@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<link rel="stylesheet" href="/css/chat.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+	<script type="text/javascript">
+
+		let stompClient = null;
+
+		function connect() {
+			let socket = new SockJS('/ws'); // /ws : 암호화 되지 않은 웹소켓 연결('/ws' endpoint) 암호화된 연결 => wss
+			stompClient = Stomp.over(socket); // STOMP을 사용할 수 있도록 설정(메세지 송수신 가능 클라이언트를 생성)
+
+			stompClient.connect({}, function (frame) {
+				console.log('Connected : ' + frame);
+				// "/topic/messages"로 수신된 메세지를 처리
+
+				stompClient.subscribe('/topic/public', function(message){
+					showMessage(JSON.parse(message.body));
+				});
+			});
+		}
+
+		function sendMessage() {
+			let nameInput = document.querySelector('#name');
+			let messageContent = document.querySelector('#message').value;
+
+			// 이름(채팅명) 입력 후 서버로 전송 ==> 이름 입력란 비활성화
+			if(!nameInput.disabled){
+				stompClient.send("/app/chat.addUser", {}, JSON.stringify({sender:nameInput.value, type: 'JOIN'}));
+				nameInput.disabled = true;
+			}
+
+			// 클라이언트가 입력한 메세지를 서버로 전송
+			if(messageContent && stompClient) {
+				let chatMessage = {
+					sender: nameInput.value,
+					content: messageContent,
+					type: 'CHAT'
+				};
+				stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+				document.querySelector('#message').value = "";
+			}
+		}
+
+		function showMessage(message) {
+			let msgElement = document.createElement("li");
+
+			// 메세지의 타입에 따라 다른 결과를 화면에 표시
+			if(message.type === 'JOIN'){
+				msgElement.classList.add('event-message');
+				message.content = message.sender + "님 입장";
+			} else if(message.type === 'LEAVE'){
+				msgElement.classList.add('event-message');
+				message.content = message.sender + "님 퇴장";
+			} else {
+				msgElement.classList.add('event-message');
+				let usernameElement = document.createElement("strong");
+				usernameElement.classList.add("nickname");
+				let usernameText = document.createTextNode(message.sender + ":");
+
+				usernameElement.appendChild(usernameText);
+				msgElement.appendChild(usernameElement);
+			}
+
+			// 메세지 내용 표시 element 생성
+			let textElement = document.createElement("span");
+			let messageText = document.createTextNode(message.content);
+
+			textElement.appendChild(messageText);
+			msgElement.appendChild(textElement);
+
+			document.querySelector("#msgArea").appendChild(msgElement);
+		}
+
+		function leaveChat() {
+			if(stompClient) {
+				stompClient.disconnect();
+			}
+			alert("채팅방 퇴장");
+		}
+
+		window.onload = function () {
+			connect();
+		}
+
+		window.onbeforeunload = function () { // 브라우저가 닫히기 전에 WebSocket 연결을 종료
+			if(stompClient){
+				stompClient.disconnect();
+			}
+		}
+	</script>
+</head>
+<body>
+<div>
+	<input type="text" id="name" placeholder="이름입력">
+	<br/>
+	<input type="text" id="message" placeholder="메세지 입력" onkeydown="if(event.keyCode===13) sendMessage()">
+	<button onclick="sendMessage()">전송</button>
+	<button onclick="leaveChat()">퇴장</button>
+</div>
+<ul id="msgArea"></ul>
+</body>
+</html>
