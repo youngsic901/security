@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+	<script type="text/javascript">
+		let stompClient = null;
+
+		function connect() {
+			let socket = new SockJS('/ws'); // /ws : 암호화 되지 않은 웹소켓 연결('/ws' endpoint) 암호화된 연결 => wss
+			stompClient = Stomp.over(socket); // STOMP을 사용할 수 있도록 설정(메세지 송수신 가능 클라이언트를 생성)
+
+			stompClient.connect({}, function (frame) {
+				console.log('Connected : ' + frame);
+				// "/topic/notification"로 수신된 메세지를 처리(구독)
+
+				stompClient.subscribe('/topic/notification', function(noti){ // callback function
+					let parseNoti = JSON.parse(noti.body);
+					showNotiFunc(parseNoti.type, parseNoti.message);
+				});
+			});
+		}
+
+		function sendRequest() {
+			let fromUser = document.getElementById('fromUser').value;
+			if(fromUser.trim() === "") {
+				alert("사용자 이름 입력");
+				return;
+			}
+
+			stompClient.send("/app/friend-request", {}, fromUser);
+		}
+
+		function sendComment() {
+			let fromUser = document.getElementById('fromUser').value;
+			if(fromUser.trim() === "") {
+				alert("사용자 이름 입력2");
+				return;
+			}
+
+			stompClient.send("/app/comment", {}, fromUser);
+		}
+
+		function sendLike() {
+			let fromUser = document.getElementById('fromUser').value;
+			if(fromUser.trim() === "") {
+				alert("사용자 이름 입력3");
+				return;
+			}
+
+			stompClient.send("/app/like", {}, fromUser);
+		}
+
+		function showNotiFunc(type, message) {
+			let notiShow = document.getElementById("notiShow");
+			let li = document.createElement("li");
+
+			if(type === "좋아요"){
+				li.innerHTML = `${type}:${message} ♥`;
+			} else {
+				li.appendChild(document.createTextNode(`${type}:${message}`));
+			}
+			notiShow.appendChild(li);
+		}
+
+		window.onload = connect;
+	</script>
+</head>
+<body>
+<h2>실시간 소셜 미디어 알림</h2>
+<div>
+	<label for="fromUser">사용자 이름 : </label>
+	<input type="text" id="fromUser">
+</div>
+<br/>
+<div>
+	<b>이벤트 발생</b>
+	<button onclick="sendRequest()">친구 요청</button>
+	<button onclick="sendComment()">댓글 달기</button>
+	<button onclick="sendLike()">좋아요 클릭</button>
+</div>
+<br/>
+<div>
+	<b>알림</b>
+	<ul id="notiShow"></ul>
+</div>
+</body>
+</html>
